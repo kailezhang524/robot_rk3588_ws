@@ -22,6 +22,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-colcon-common-extensions \
     python3-rosdep \
     python3-vcstool \
+    net-tools \
+    iputils-ping \
+    iproute2 \
+    netcat \
+    dnsutils \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. ROS2 基础依赖
@@ -50,6 +55,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-pcl-conversions \
     ros-humble-pcl-msgs \
     ros-humble-sophus \
+    ros-humble-rviz2 \
+    ros-humble-teleop-twist-keyboard \
+    ros-humble-teleop-twist-joy \
+    ros-humble-key-teleop \
+    libgl1-mesa-glx \
+    libgl1-mesa-dri \
+    mesa-utils \
+    x11-apps \
     && rm -rf /var/lib/apt/lists/*
 
 # 3. 第三方基础库
@@ -108,14 +121,17 @@ RUN unzip gtsam.zip && \
 
 # 6. 安装 Livox-SDK2
 WORKDIR /opt
-RUN git clone https://github.com/Livox-SDK/Livox-SDK2.git && \
-    cd Livox-SDK2 && \
+COPY Livox-SDK2 /opt/Livox-SDK2
+
+RUN cd /opt/Livox-SDK2 && \
+    rm -rf build && \
     mkdir build && cd build && \
     cmake .. \
       -DCMAKE_BUILD_TYPE=Release && \
     make -j$(nproc) && \
     make install && \
-    ldconfig
+    ldconfig && \
+    rm -rf /opt/Livox-SDK2
 
 # 7. 安装 TEASER++
 WORKDIR /opt

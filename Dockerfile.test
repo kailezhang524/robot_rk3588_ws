@@ -1,4 +1,0 @@
-FROM alpine:latest
-COPY src /test_src
-RUN ls -la /test_src
-CMD ["ls", "-la", "/test_src"]
