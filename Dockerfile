@@ -3,6 +3,12 @@ FROM ros:humble-ros-base-jammy
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ROS_DISTRO=humble
 
+# 中文 UTF-8 环境，避免 Python/Tkinter/终端中文乱码
+ENV LANG=zh_CN.UTF-8
+ENV LC_ALL=zh_CN.UTF-8
+ENV LANGUAGE=zh_CN:zh
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
 SHELL ["/bin/bash", "-c"]
 
 # 1. 基础工具
@@ -13,12 +19,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     curl \
     vim \
+    xterm \
+    xfce4-terminal \
     nano \
     unzip \
     lsb-release \
     gnupg2 \
     ca-certificates \
+    locales \
+    tzdata \
+    fontconfig \
+    fonts-noto-cjk \
+    fonts-wqy-zenhei \
+    fonts-wqy-microhei \
     python3-pip \
+    python3-tk \
     python3-colcon-common-extensions \
     python3-rosdep \
     python3-vcstool \
@@ -27,6 +42,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     iproute2 \
     netcat \
     dnsutils \
+    && ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo ${TZ} > /etc/timezone \
+    && locale-gen zh_CN.UTF-8 \
+    && update-locale LANG=zh_CN.UTF-8 \
+    && fc-cache -fv \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. ROS2 基础依赖
@@ -43,6 +63,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-tf2-ros \
     ros-humble-tf2-eigen \
     ros-humble-tf2-geometry-msgs \
+    ros-humble-tf2-sensor-msgs \
+    ros-humble-ament-cmake-auto \
+    ros-humble-laser-geometry \
     ros-humble-message-filters \
     ros-humble-ament-cmake \
     ros-humble-ament-index-cpp \
@@ -59,6 +82,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-teleop-twist-keyboard \
     ros-humble-teleop-twist-joy \
     ros-humble-key-teleop \
+    ros-humble-rclpy \
+    ros-humble-ament-index-python \
     libgl1-mesa-glx \
     libgl1-mesa-dri \
     mesa-utils \
