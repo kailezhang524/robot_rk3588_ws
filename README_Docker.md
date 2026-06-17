@@ -191,17 +191,16 @@ sudo docker cp ~/robot_rk3588_ws/src robot_runtime:/root/robot_rk3588_ws/
 sudo docker exec -it robot_runtime bash -lc "
 cd /root/robot_rk3588_ws &&
 source /opt/ros/humble/setup.bash &&
-colcon build --symlink-install
+colcon build --symlink-install --parallel-workers 2 --cmake-args -DROS_EDITION=ROS2 -DHUMBLE_ROS=humble
 "
 
 # 6. 提交容器为新镜像
 sudo docker commit robot_runtime docker_image:rk3588
 
 # 7. 保存镜像
-sudo docker save docker_image:rk3588 -o docker_image_rk3588.tar
-
-# 8. 压缩
+docker save docker_image:rk3588 -o docker_image_rk3588.tar
 gzip -f docker_image_rk3588.tar
+ 
 
 得到：
 
@@ -334,28 +333,6 @@ sudo docker rm -f robot_runtime 2>/dev/null || true
 ---
 
 ## 7. 运行镜像容器
-
-把最后一行的镜像名替换成你当前要运行的镜像。
-
-运行基础镜像：
-
-```bash
-sudo docker run -it \
-  --name robot_runtime \
-  --net=host \
-  --ipc=host \
-  --privileged \
-  -e ROS_DOMAIN_ID=0 \
-  -e DISPLAY=$DISPLAY \
-  -e XAUTHORITY=/tmp/.Xauthority \
-  -v /dev:/dev \
-  -v /tmp/.X11-unix:/tmp/.X11-unix \
-  -v ~/.Xauthority:/tmp/.Xauthority:ro \
-  -v /robotfs/data/docker_ws/robot_data:/root/robot_data \
-  docker_image:rk3588
-```
-
-运行调试镜像：
 
 ```bash
 sudo docker run -it \

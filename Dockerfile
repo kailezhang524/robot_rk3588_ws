@@ -64,6 +64,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-tf2-eigen \
     ros-humble-tf2-geometry-msgs \
     ros-humble-tf2-sensor-msgs \
+    ros-humble-angles \
     ros-humble-ament-cmake-auto \
     ros-humble-laser-geometry \
     ros-humble-message-filters \
